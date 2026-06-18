@@ -1,99 +1,91 @@
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "solver.h"
 #include "lexer.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#define TREESTACKSIZE 5
 
-double runOp(OpType op, double a, double b) {
-  switch (op) {
-  case PLUS:
-    return a + b;
-  case MINUS:
-    return a - b;
-  case MUL:
-    return a * b;
-  case DIV:
-    return a / b;
-  case EXP:
-    return 0;
-  }
-}
+double parseVal(); // Raw values or expressions enclosed in (); also responsible(mostly) for going forward in list
+double parseExponential(); // Exponentiation
+double parseGeometric(); // Multiplication
+double parseArithmetic(); // Adding and subtraction
 
-OpType get_opType(char c) {
-  switch (c) {
-  case '+':
-    return PLUS;
-  case '-':
-    return MINUS;
-  case '*':
-    return MUL;
-  case '/':
-    return DIV;
-  case '^':
-    return EXP;
-  default:
-    return -1;
-  }
-}
-
-double parseVal();
-double parseExponential();
-double parseGeometric();
-double parseArithmetic();
-
-int lastElement;
+int size;
 Token *token;
 
 Token* advance() {
   static int currentElem = 0;
-  if(currentElem == lastElement) {
+  if(currentElem == size) {
     return NULL;
   }
   currentElem++;
   return token++;
 }
 
-double solve(TokenList *tokenlist) {
+double solve(const TokenList *tokenlist) {
   if(tokenlist->size == 0) {
     return 0;
   }
-  lastElement = tokenlist->size - 1;
+  size = tokenlist->size - 1;
   Token *tokens = tokenlist->data;
+  token = tokens;
+  
   return parseArithmetic();
 }
 
-
 double parseArithmetic() {
-  double left = parseGeometric();
+  double value = parseGeometric();
 
   while (token->ch == '+' || token->ch == '-') {
-    
-  }  
+    Token *last = advance();
+    if(last->ch == '+') {
+      value += parseGeometric();
+    }else if(last->ch == '-') {
+      value -= parseGeometric();
+    }
+  }
+
+  return value;
 }
 
 double parseGeometric() {
-  double left = parseExponential();
+  double value = parseExponential();
 
   while(token->ch == '*' || token->ch == '/') {
-    
+    Token *last = advance();
+    if(last->ch == '*') {
+      value *= parseExponential();
+    } else if(last->ch == '/') {
+      value /= parseExponential();
+    }
   }
+  return value;
 }
 
 double parseExponential() {
-  double left = parseVal();
+  double value = parseVal();
 
   while (token->ch == '^') {
     advance();
-    left += parseVal();
-  } 
+    value = pow(value, parseVal());
+  }
+
+  return value;
 }
 
-// 2 * 2 * 4 / 3
-
-
-double parseVal(Token *token) {
-  double value = strtod(token->str, NULL);
-  advance();
+double parseVal() {
+  double value;
+  if(token->type == SEP_OPEN) {
+    advance();
+    value = parseArithmetic();
+  }else {
+    value = strtod(token->str, NULL);
+  }
+  Token *last = advance();
+  
+  while(token->type == SEP_OPEN) {
+    advance();
+    value *= parseArithmetic();
+    advance();
+  }
   return value;
 }

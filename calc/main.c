@@ -1,8 +1,6 @@
-#include "src/oplogic.h"
-#include <stdbool.h>
 #include <stdio.h>
 #include <threads.h>
-
+#include "src/solver.h"
 #include "src/lexer.h"
 
 #define is_digit(x) (x >= 48 && x <= 57)
@@ -28,7 +26,7 @@ int main(int argc, char *argv[]) {
 
   get_tokens(to_compute, &tokenlist);
     
-  
+  printf("Result: %f\n", solve(&tokenlist));
 
   free_tokenList(&tokenlist);
 

@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +52,7 @@ int push_token(TokenList *list, Token token) {
   if (list->size == list->capacity) {
     list->capacity *= 2;
     Token *newalloc = realloc(list->data, sizeof(Token) * list->capacity);
-    if (newalloc == NULL) return -1;
+    if (newalloc == NULL) return 1;
     list->data = newalloc;
   }
   list->data[list->size] = token;
@@ -66,6 +65,7 @@ void get_tokens(char *string, TokenList *tokenList) {
   char *numFirst = NULL;
   unsigned short int numLen = 0;
   char *c = string;
+  int count = 0;
   do {
     TokenType currentType = get_tokenType(*c);
 
@@ -84,16 +84,13 @@ void get_tokens(char *string, TokenList *tokenList) {
         memcpy(newStr, numFirst, sizeof(char) * numLen);
         newStr[numLen] = '\0';
         Token token = {NUMBER, .str = newStr};
-        if (push_token(tokenList, token)) {
-          puts("Failed to push token");
-        }
+        
+        if (push_token(tokenList, token)) puts("Failed to push token");
         numLen = 0, numFirst = NULL;
       }
       if (currentType != -1) {
         Token token = {currentType, .ch = *c};
-        if (push_token(tokenList, token) == -1) {
-          puts("Failed to push token");
-        }
+        if (push_token(tokenList, token))  puts("Failed to push token");
       }
     }
   } while (*(c++) != '\0');
