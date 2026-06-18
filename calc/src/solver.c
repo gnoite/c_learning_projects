@@ -1,6 +1,5 @@
 #include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include "solver.h"
 #include "lexer.h"
 

@@ -1,22 +1,14 @@
 #include <stdio.h>
-#include <threads.h>
 #include "src/solver.h"
 #include "src/lexer.h"
 
-#define is_digit(x) (x >= 48 && x <= 57)
-
-char *handle_args(int argc, char *argv[]) {
-  if (argc <= 1) {
-    return NULL;
-  } else if (argc > 2) {
-    // read file
-  }
-  return argv[1];
-}
-
 
 int main(int argc, char *argv[]) {
-  char *to_compute = handle_args(argc, argv);
+  if(argc < 2) {
+    puts("Not enough args.");
+    return 1;
+  }
+  char *to_compute = argv[1];
 
   TokenList tokenlist = new_tokenList();
   if (tokenlist.size == -1) {
