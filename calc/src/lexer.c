@@ -114,5 +114,6 @@ char* tktype_toString(TokenType type) {
     case OPERATOR: return "OPERATOR";
     case SEP_OPEN: return "OPEN_PARENTHESIS";
     case SEP_CLOSE: return "CLOSED_PARENTHESIS";
+    case NONE: return "NONE";
   }
 }
