@@ -1,5 +1,5 @@
 #pragma once
-typedef enum { NUMBER, OPERATOR, SEP_OPEN, SEP_CLOSE } TokenType;
+typedef enum { NONE, NUMBER, OPERATOR, SEP_OPEN, SEP_CLOSE } TokenType;
 
 typedef struct {
   TokenType type;
@@ -15,10 +15,9 @@ typedef struct {
   unsigned int size;
 } TokenList;
 
-
-void free_tokenList(TokenList *tokenlist);
+char* tktype_toString(TokenType);
 
 TokenList new_tokenList();
-
+void free_tokenList(TokenList *tokenlist);
 
 void get_tokens(char *string, TokenList* tokenList);

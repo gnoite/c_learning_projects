@@ -17,9 +17,9 @@ int main(int argc, char *argv[]) {
   }
 
   get_tokens(to_compute, &tokenlist);
-    
+  
   printf("Result: %f\n", solve(&tokenlist));
-
+  
   free_tokenList(&tokenlist);
 
   return 0;
